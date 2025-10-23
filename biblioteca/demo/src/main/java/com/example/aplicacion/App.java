@@ -4,24 +4,34 @@ import java.sql.SQLException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-import com.example.conexiones.MySQLConnection;
 
 
 public class App {
 
     public static void main(String[] args) {
-        MySQLConnection dbConnection = new MySQLConnection();
         // testConnection(dbConnection , "MySQL:biblioAlberN");
         Scanner scanner = new Scanner(System.in);
+        Boolean borrarBaseDeDatos;
+        System.out.println("¿Desea borrar la base de datos existente y crear una nueva? ('s') cualquier otro caracter para no");
+        if (scanner.next().equals("s")) {
+            borrarBaseDeDatos = true;
+        } else {
+            borrarBaseDeDatos = false;            
+        }
+
 
         try {
-            GestorBiblioteca prueba = new GestorBiblioteca(dbConnection);
+            // Gestiona las bases de la biblioteca y libros
+            GestorBiblioteca gestorBiblioteca = new GestorBiblioteca(borrarBaseDeDatos);
+            GestorLibros gestorLibros = new GestorLibros(gestorBiblioteca.getConexion());
 
             int opcion = 1;
 
             while (opcion != 0) {
+                // Gestiona la impresion del menu
                 System.out.println("");
                 System.out.println("Menu");
+                System.out.println("0- Salir");
                 System.out.println("1- Añadir libros");
                 System.out.println("2- Listar todos los libros");
                 System.out.println("3- Listar libros por autor");
@@ -32,7 +42,6 @@ public class App {
                 System.out.println("8- Eliminar un libro por titulo");
                 System.out.println("9- Eliminar libros por año");
                 System.out.println("10- Eliminar todos los libros");
-                System.out.println("0- Salir");
                 System.out.println("");
                 System.out.print("Indique una opción: ");
                 opcion = scanner.nextInt();
@@ -47,7 +56,7 @@ public class App {
                         int año = scanner.nextInt();
                         System.out.println("Indique el ISBN");
                         String isbn = scanner.next();
-                        prueba.addLibro(titulo, autor, año, isbn);
+                        gestorLibros.addLibro(titulo, autor, año, isbn);
                     } catch (InputMismatchException e) {
                         System.out.println("Ha ingresado algo distinto a un int en año. Se cancela la adición del libro");
                         // Limpiamos el buffer por si las moscas
@@ -56,18 +65,18 @@ public class App {
                     
                     break;
                 case 2:
-                    prueba.todosLibros();
+                    gestorLibros.todosLibros();
                     break;
                 case 3:
                     System.out.println("Indique el autor");
                     String autor = scanner.next();
-                    prueba.LibrosAutor(autor);
+                    gestorLibros.LibrosAutor(autor);
                     break;
                 case 4:
                     try {
                         System.out.println("Indique el año");
                         int año = scanner.nextInt();
-                        prueba.LibrosAutor(año);
+                        gestorLibros.LibrosPosteriorAño(año);
                     } catch (InputMismatchException e) {
                         System.out.println("Ha ingresado algo distinto a un int en año. Se cancela la búsqueda");
                         // Limpiamos el buffer por si las moscas
@@ -79,7 +88,7 @@ public class App {
                     String tituloNuevo = scanner.next();
                     System.out.println("Indique el titulo viejo (no se aceptan espacios)");
                     String tituloViejo = scanner.next();
-                    prueba.modificarTitulo(tituloNuevo, tituloViejo);
+                    gestorLibros.modificarTitulo(tituloNuevo, tituloViejo);
                     break;
 
                 case 6:
@@ -88,7 +97,7 @@ public class App {
                     autor = scanner.next();
                     System.out.println("Indique el titulo (no se aceptan espacios)");
                     tituloViejo = scanner.next();
-                    prueba.modificarAutor(autor, tituloViejo);
+                    gestorLibros.modificarAutor(autor, tituloViejo);
                     break;
                 
                 case 7:
@@ -97,7 +106,7 @@ public class App {
                         int año = scanner.nextInt();
                         System.out.println("Indique el titulo viejo (no se aceptan espacios)");
                         tituloViejo = scanner.next();
-                        prueba.modificarAño(año, tituloViejo);
+                        gestorLibros.modificarAño(año, tituloViejo);
                     } catch (InputMismatchException e) {
                         System.out.println("Has insertado un int no valido no se hace nada");
                     }
@@ -105,20 +114,20 @@ public class App {
                 case 8:
                     System.out.println("Indique un titulo");
                     String titulo = scanner.next();
-                    prueba.eliminarLibro(titulo);
+                    gestorLibros.eliminarLibro(titulo);
                     break;
 
                 case 9:
                     try {
                         System.out.println("Indique el año");
                         int año = scanner.nextInt();
-                        prueba.eliminarLibrosAño(año);
+                        gestorLibros.eliminarLibrosAño(año);
                     } catch (InputMismatchException e) {
                         System.out.println("Has insertado un int no valido no se hace nada");
                     }
                     break;
                 case 10:
-                    prueba.LimpiarLibros();
+                    gestorLibros.LimpiarLibros();
                     break;
                     
 
@@ -129,8 +138,11 @@ public class App {
             }
             
         } catch (SQLException e) {
-            System.out.println("Ha surgido algun error en ejecución le dejo el error sql");
+            System.out.println("Ha surgido algun error en ejecución del SQL le dejo el código de error:");
             System.out.println(e.getErrorCode());
+        } catch (Exception e) {
+            System.out.println("Ha surgido algun error no previsto en pruebas internas en la ejecución habra una incidencia con el error:");
+            System.out.println(e.getMessage());
         }
         
         
