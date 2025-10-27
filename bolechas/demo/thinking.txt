@@ -1,0 +1,16 @@
+producto
+- id
+- nombre
+- precio
+- descripcion
+
+pedido
+- id
+- fecha
+- cantidad
+- id_producto
+- dni_cliente
+
+cliente
+- dni
+- nombre
