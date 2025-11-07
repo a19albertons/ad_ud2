@@ -1,0 +1,12 @@
+[
+  {
+    "fecha": "2025-10-27",
+    "dni_cliente": 5,
+    "idPedido": 0,
+    "idProducto": 1,
+    "cantidad": 60,
+    "nombre": "producto1",
+    "precio": 89.0,
+    "descripcion": "adfsdaf"
+  }
+]
