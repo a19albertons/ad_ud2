@@ -1,0 +1,6 @@
+com/example/aplicacion/ConfigLoader.class
+com/example/conexiones/MySQLConnection.class
+com/example/aplicacion/app.class
+com/example/aplicacion/GestorAlumnos.class
+com/example/conexiones/DBConnection.class
+com/example/conexiones/PostgresConnection.class
